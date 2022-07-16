@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import useWebSocket from 'react-use-websocket';
 
+import { formatNumber } from 'helpers/number.helpers';
+import { LAST_PRICE_WS_URL } from 'constants/websockets.constants';
+
 const LastPrice = () => {
-  const LAST_PRICE_WS_URL = 'wss://ws.btse.com/ws/futures';
   const [lastPrice, setLastPrice] = useState(0);
   const [priceState, setPriceState] = useState<'HIGHER' | 'LOWER' | 'EQUAL'>(
     'EQUAL'
@@ -16,7 +18,7 @@ const LastPrice = () => {
   });
 
   const processLastPrice = (event: { data: string }) => {
-    const response = JSON.parse(event.data);
+    const response = JSON.parse(event.data) as ITradeHistoryResponse;
 
     if (response.data && response.data.length) {
       setLastPrice((prevState) => {
@@ -45,12 +47,14 @@ const LastPrice = () => {
   return (
     <div
       className={cx(
-        'mx-auto text-default-white font-semibold py-2',
-        priceState === 'HIGHER' ? 'text-buy-green' : '',
-        priceState === 'LOWER' ? 'text-sell-red' : ''
+        'font-semibold py-1 w-full flex justify-center items-center',
+        priceState === 'HIGHER' ? 'text-buy-green bg-dark-green' : '',
+        priceState === 'LOWER' ? 'text-sell-red bg-dark-red' : '',
+        priceState === 'EQUAL' ? 'text-default-white bg-dark-grey' : ''
       )}
     >
-      {lastPrice}
+      {formatNumber(lastPrice)}
+      {/* <ArrowIcon fill='red' /> */}
     </div>
   );
 };
