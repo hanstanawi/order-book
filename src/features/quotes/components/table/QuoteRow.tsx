@@ -1,6 +1,7 @@
 import cx from 'classnames';
-import { formatNumber } from 'helpers/number.helpers';
+
 import QuoteSize from './QuoteSize';
+import { formatNumber } from 'helpers/number.helpers';
 
 type QuoteRowProps = {
   quote: IQuote;
@@ -20,7 +21,9 @@ const QuoteRow = ({ quote, type }: QuoteRowProps) => {
           {formatNumber(quote.price)}
         </div>
         <QuoteSize quoteSize={quote.size} />
-        <div className='text-default-white'>0</div>
+        <div className='text-default-white'>
+          {formatNumber(quote.total || 0)}
+        </div>
       </div>
     </li>
   );

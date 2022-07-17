@@ -1,5 +1,8 @@
-import QuoteRow from './QuoteRow';
-import { sortQuotesPrice } from 'helpers/quotes.helpers';
+import QuoteRow from './table/QuoteRow';
+import {
+  calculateQuotesTotal,
+  sortQuotesPrice,
+} from '../helpers/quotes.helpers';
 
 type QuotesListProps = {
   quotes: IQuote[];
@@ -12,10 +15,11 @@ const QuotesList = ({ quotes, type }: QuotesListProps) => {
     shownQuotes,
     type === 'SELL' ? 'DESC' : 'ASC'
   );
+  const quotesWithTotal = calculateQuotesTotal(sortedQuotes);
 
   return (
     <ul className='h-full flex flex-col justify-center'>
-      {sortedQuotes.map((quote, i) => (
+      {quotesWithTotal.map((quote, i) => (
         <QuoteRow key={i} quote={quote} type={type} />
       ))}
     </ul>

@@ -3,7 +3,7 @@ import cx from 'classnames';
 import useWebSocket from 'react-use-websocket';
 
 import { formatNumber } from 'helpers/number.helpers';
-import { LAST_PRICE_WS_URL } from 'constants/websockets.constants';
+import { LAST_PRICE_WS_URL } from '../constants';
 
 const LastPrice = () => {
   const [lastPrice, setLastPrice] = useState(0);

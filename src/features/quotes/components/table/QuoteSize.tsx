@@ -1,7 +1,7 @@
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
 
-import usePrevious from 'hooks/use-previous';
+import usePrevious from 'features/quotes/hooks/use-previous';
 
 type QuoteSizeProps = {
   quoteSize: number;
@@ -10,7 +10,6 @@ type QuoteSizeProps = {
 const QuoteSize = ({ quoteSize }: QuoteSizeProps) => {
   const prevQuoteSize = usePrevious<number>(quoteSize);
   const [sizeState, setSizeState] = useState<'HIGHER' | 'LOWER' | null>(null);
-  console.log(sizeState);
 
   useEffect(() => {
     if (prevQuoteSize) {

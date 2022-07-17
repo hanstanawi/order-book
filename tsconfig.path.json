@@ -5,7 +5,9 @@
       "components/*": ["components/*"],
       "constants/*": ["constants/*"],
       "hooks/*": ["hooks/*"],
-      "helpers/*": ["helpers/*"]
+      "helpers/*": ["helpers/*"],
+      "features/*": ["features/*"],
+      "app/*": ["app/*"]
     }
   }
 }
