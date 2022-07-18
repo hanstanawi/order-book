@@ -2,6 +2,7 @@ import cx from 'classnames';
 import { useEffect, useState } from 'react';
 
 import usePrevious from 'features/quotes/hooks/use-previous';
+import { formatNumber } from 'helpers/number.helpers';
 
 type QuoteSizeProps = {
   quoteSize: number;
@@ -20,16 +21,17 @@ const QuoteSize = ({ quoteSize }: QuoteSizeProps) => {
       }
     }
   }, [quoteSize, prevQuoteSize]);
+
   return (
-    <div
+    <td
       className={cx(
         'text-default-white',
         sizeState && sizeState === 'HIGHER' ? 'bg-flash-red' : '',
         sizeState && sizeState === 'LOWER' ? 'bg-flash-green' : ''
       )}
     >
-      {quoteSize}
-    </div>
+      {formatNumber(quoteSize)}
+    </td>
   );
 };
 

@@ -1,16 +1,12 @@
-type ArrowIconProps = {
-  fill: string;
-};
-
-const ArrowIcon = ({ fill }: ArrowIconProps) => {
+const ArrowIcon = () => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      width='24'
-      height='24'
+      width='18'
+      height='18'
       viewBox='0 0 24 24'
       role='presentation'
-      fill={fill}
+      fill='none'
       fill-rule='nonzero'
       stroke='currentColor'
       stroke-width='4'

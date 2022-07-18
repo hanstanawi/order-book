@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import cx from 'classnames';
 import useWebSocket from 'react-use-websocket';
 
+import ArrowIcon from 'components/icons/ArrowIcon';
 import { formatNumber } from 'helpers/number.helpers';
 import { LAST_PRICE_WS_URL } from '../constants';
+import { useAppDispatch } from 'hooks/use-app-dispatch';
+import { useAppSelector } from 'hooks/use-app-selector';
+import { setLastPrice } from '../slices/trade-history.slice';
 
 const LastPrice = () => {
-  const [lastPrice, setLastPrice] = useState(0);
-  const [priceState, setPriceState] = useState<'HIGHER' | 'LOWER' | 'EQUAL'>(
-    'EQUAL'
+  const dispatch = useAppDispatch();
+  const { lastPrice, lastPriceState: priceState } = useAppSelector(
+    (state) => state.tradeHistory
   );
 
   const { sendJsonMessage } = useWebSocket(LAST_PRICE_WS_URL, {
@@ -21,18 +25,7 @@ const LastPrice = () => {
     const response = JSON.parse(event.data) as ITradeHistoryResponse;
 
     if (response.data && response.data.length) {
-      setLastPrice((prevState) => {
-        const currentPrice = response.data[0].price;
-        // TODO: separate function
-        if (currentPrice > prevState) {
-          setPriceState('HIGHER');
-        } else if (currentPrice < prevState) {
-          setPriceState('LOWER');
-        } else {
-          setPriceState('EQUAL');
-        }
-        return currentPrice;
-      });
+      dispatch(setLastPrice(response.data[0].price));
     }
   };
 
@@ -47,14 +40,22 @@ const LastPrice = () => {
   return (
     <div
       className={cx(
-        'font-semibold py-1 w-full flex justify-center items-center',
+        'font-semibold py-1 w-full flex justify-center items-center gap-x-1',
         priceState === 'HIGHER' ? 'text-buy-green bg-dark-green' : '',
         priceState === 'LOWER' ? 'text-sell-red bg-dark-red' : '',
         priceState === 'EQUAL' ? 'text-default-white bg-dark-grey' : ''
       )}
     >
-      {formatNumber(lastPrice)}
-      {/* <ArrowIcon fill='red' /> */}
+      <p>{formatNumber(lastPrice)}</p>
+      <div
+        className={cx(
+          priceState === 'HIGHER' ? 'rotate-180 block' : '',
+          priceState === 'LOWER' ? 'block' : '',
+          priceState === 'EQUAL' ? 'hidden' : ''
+        )}
+      >
+        <ArrowIcon />
+      </div>
     </div>
   );
 };

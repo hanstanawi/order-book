@@ -1,6 +1,10 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { modifyQuotes, sortQuotesPrice } from '../helpers/quotes.helpers';
+import {
+  calculateQuotesTotal,
+  modifyQuotes,
+  sortQuotesPrice,
+} from '../helpers/quotes.helpers';
 
 interface IQuoteState {
   buyQuotes: IQuote[];
@@ -17,20 +21,25 @@ export const quotesSlice = createSlice({
   initialState,
   reducers: {
     setBuyQuotesHandler: (state, action: PayloadAction<string[][]>) => {
+      // Reducer
+      /**
+       * 1. Modify quotes transform to be Array<{ price: number, size: number }>
+       * 2. Sort quotes based on price
+       * 3. Slice quotes to be 8 items
+       * 4. Count total of each item in quotes array
+       */
       const modifiedQuotes = modifyQuotes(action.payload);
-      // const updatedQuotes = [...modifiedQuotes, ...state.buyQuotes];
-      modifiedQuotes.forEach((quote) => {
-        state.buyQuotes.push(quote);
-      });
-      console.log(current(state).buyQuotes);
-      const sortedQuotes = sortQuotesPrice(current(state).buyQuotes, 'ASC');
-      state.buyQuotes = [...sortedQuotes];
+      const updatedQuotes = [...modifiedQuotes, ...current(state).buyQuotes];
+      const shownQuotes = updatedQuotes.slice(0, 8);
+      const sortedQuotes = sortQuotesPrice(shownQuotes, 'DESC');
+      state.buyQuotes = calculateQuotesTotal(sortedQuotes);
     },
     setSellQuotesHandler: (state, action: PayloadAction<string[][]>) => {
       const modifiedQuotes = modifyQuotes(action.payload);
-      const updatedQuotes = [...modifiedQuotes, ...state.sellQuotes];
-      const sortedQuotes = sortQuotesPrice(updatedQuotes, 'DESC');
-      state.sellQuotes = [...updatedQuotes];
+      const updatedQuotes = [...modifiedQuotes, ...current(state).sellQuotes];
+      const shownQuotes = updatedQuotes.slice(0, 8);
+      const sortedQuotes = sortQuotesPrice(shownQuotes, 'DESC');
+      state.sellQuotes = calculateQuotesTotal(sortedQuotes);
     },
   },
 });

@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import useWebSocket from 'react-use-websocket';
 
 import { QUOTES_WS_URL } from 'features/quotes/constants';
@@ -14,30 +14,18 @@ import {
   setBuyQuotesHandler,
   setSellQuotesHandler,
 } from 'features/quotes/slices/quotes.slice';
-import { modifyQuotes } from 'features/quotes/helpers/quotes.helpers';
 
 /**
  * TODO:
- * - Add arrow svg icon
- * - Add flash css animation
  * - Implement total quote logic (using array.reduce)
  * - Implement accumulative total size percentage bar
- * - Implement quote row flash animation when new quote appears (detect prev state)
  * - Fix table css (implement css grid)
- */
-
-// Reducer
-/**
- * 1. Modify quotes transform to be Array<{ price: number, size: number }>
- * 2. Sort quotes based on price
- * 3. Slice quotes to be 8 items
- * 4. Count total of each item in quotes array
+ * - Add flash css animation
+ * - Implement quote row flash animation when new quote appears (detect prev state)
  */
 
 function App() {
   const dispatch = useAppDispatch();
-  const [sellQuotes, setSellQuotes] = useState<IQuote[]>([]);
-  const [buyQuotes, setBuyQuotes] = useState<IQuote[]>([]);
 
   const { sendJsonMessage } = useWebSocket(QUOTES_WS_URL, {
     onOpen: () => console.log('WebSocket connection opened.'),
@@ -49,16 +37,6 @@ function App() {
     const response = JSON.parse(event.data) as IOrderBookResponse;
     dispatch(setBuyQuotesHandler(response.data.bids));
     dispatch(setSellQuotesHandler(response.data.asks));
-
-    const sellQuotes = modifyQuotes(response.data.asks);
-    const buyQuotes = modifyQuotes(response.data.bids);
-
-    setSellQuotes((prevState) => {
-      return [...sellQuotes, ...prevState];
-    });
-    setBuyQuotes((prevState) => {
-      return [...buyQuotes, ...prevState];
-    });
   };
 
   const subscribeHandler = useCallback(() => {
