@@ -1,7 +1,5 @@
-import { useCallback } from 'react';
 import useWebSocket from 'react-use-websocket';
-
-import { QUOTES_WS_URL } from 'features/quotes/constants';
+import { useCallback } from 'react';
 
 import LastPrice from 'features/trade-history/components/LastPrice';
 import SellQuotes from 'features/quotes/components/SellQuotes';
@@ -9,6 +7,8 @@ import BuyQuotes from 'features/quotes/components/BuyQuotes';
 import Container from 'components/layout/Container';
 import AppTitle from 'components/layout/AppTitle';
 import TableHeader from 'components/layout/TableHeader';
+
+import { QUOTES_WS_URL } from 'features/quotes/constants';
 import { useAppDispatch } from 'hooks/use-app-dispatch';
 import {
   setBuyQuotesHandler,
@@ -17,11 +17,10 @@ import {
 
 /**
  * TODO:
- * - Implement total quote logic (using array.reduce)
- * - Implement accumulative total size percentage bar
  * - Fix table css (implement css grid)
  * - Add flash css animation
  * - Implement quote row flash animation when new quote appears (detect prev state)
+ * - Implement quote size color change
  */
 
 function App() {

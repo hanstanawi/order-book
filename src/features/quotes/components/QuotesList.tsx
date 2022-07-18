@@ -1,8 +1,8 @@
 import QuoteRow from './table/QuoteRow';
 
 type QuotesListProps = {
-  quotes: IQuote[];
-  type: 'BUY' | 'SELL';
+  quotes: IQuoteWithTotal[];
+  type: QuoteType;
 };
 
 const QuotesList = ({ quotes, type }: QuotesListProps) => {

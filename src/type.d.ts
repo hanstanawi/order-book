@@ -1,7 +1,10 @@
 interface IQuote {
   price: number;
   size: number;
-  total?: number;
+}
+
+interface IQuoteWithTotal extends IQuote {
+  total: number;
 }
 
 interface IOrderBookResponse {
@@ -30,3 +33,5 @@ interface ITradeHistoryResponse {
   topic: string;
   data: ITradeHistory[];
 }
+
+type QuoteType = 'SELL' | 'BUY';

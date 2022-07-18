@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import usePrevious from 'features/quotes/hooks/use-previous';
 import { formatNumber } from 'helpers/number.helpers';
@@ -10,27 +10,30 @@ type QuoteSizeProps = {
 
 const QuoteSize = ({ quoteSize }: QuoteSizeProps) => {
   const prevQuoteSize = usePrevious<number>(quoteSize);
+  const prevQuote = useRef(0);
   const [sizeState, setSizeState] = useState<'HIGHER' | 'LOWER' | null>(null);
 
   useEffect(() => {
-    if (prevQuoteSize) {
-      if (prevQuoteSize > quoteSize) {
-        setSizeState('LOWER');
-      } else {
-        setSizeState('HIGHER');
-      }
+    prevQuote.current = quoteSize;
+    if (quoteSize > prevQuote.current) {
+      setSizeState('LOWER');
+    } else if (quoteSize < prevQuote.current) {
+      setSizeState('HIGHER');
+    } else {
+      setSizeState(null);
     }
-  }, [quoteSize, prevQuoteSize]);
+  }, [quoteSize]);
 
   return (
     <td
       className={cx(
         'text-default-white',
-        sizeState && sizeState === 'HIGHER' ? 'bg-flash-red' : '',
-        sizeState && sizeState === 'LOWER' ? 'bg-flash-green' : ''
+        sizeState === 'LOWER' ? 'bg-flash-red' : '',
+        sizeState === 'HIGHER' ? 'bg-flash-green' : ''
       )}
     >
-      {formatNumber(quoteSize)}
+      <div>{formatNumber(quoteSize)}</div>
+      {/* {prevQuote.current} */}
     </td>
   );
 };

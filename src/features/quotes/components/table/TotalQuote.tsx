@@ -3,7 +3,7 @@ import { useAppSelector } from 'hooks/use-app-selector';
 
 type TotalQuoteProps = {
   quoteTotal: number;
-  type: 'BUY' | 'SELL';
+  type: QuoteType;
 };
 
 const TotalQuote = ({ quoteTotal, type }: TotalQuoteProps) => {
@@ -18,12 +18,23 @@ const TotalQuote = ({ quoteTotal, type }: TotalQuoteProps) => {
   });
 
   const totalQuote = type === 'BUY' ? buyTotal : sellTotal;
-
-  const widthPercentage = (100 * quoteTotal) / (totalQuote || 0);
+  const widthPercentage = (100 * quoteTotal) / totalQuote;
 
   return (
     <td className='text-default-white flex justify-end'>
-      {formatNumber(quoteTotal || 0)}
+      <div
+        style={{
+          backgroundColor: `${
+            type === 'BUY'
+              ? 'rgba(16, 186, 104, 0.12)'
+              : 'rgba(255, 90, 90, 0.12)'
+          }`,
+          width: `${widthPercentage}%`,
+        }}
+        className='flex justify-end'
+      >
+        {formatNumber(quoteTotal)}
+      </div>
     </td>
   );
 };

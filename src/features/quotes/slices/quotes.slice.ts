@@ -7,8 +7,8 @@ import {
 } from '../helpers/quotes.helpers';
 
 interface IQuoteState {
-  buyQuotes: IQuote[];
-  sellQuotes: IQuote[];
+  buyQuotes: IQuoteWithTotal[];
+  sellQuotes: IQuoteWithTotal[];
 }
 
 const initialState: IQuoteState = {
@@ -38,8 +38,11 @@ export const quotesSlice = createSlice({
       const modifiedQuotes = modifyQuotes(action.payload);
       const updatedQuotes = [...modifiedQuotes, ...current(state).sellQuotes];
       const shownQuotes = updatedQuotes.slice(0, 8);
-      const sortedQuotes = sortQuotesPrice(shownQuotes, 'DESC');
-      state.sellQuotes = calculateQuotesTotal(sortedQuotes);
+      const sortedQuotes = sortQuotesPrice(shownQuotes, 'ASC');
+      const quotesWithTotal = calculateQuotesTotal(sortedQuotes);
+      state.sellQuotes = quotesWithTotal.sort((a, b) => {
+        return b.price - a.price;
+      });
     },
   },
 });

@@ -2,10 +2,11 @@ import cx from 'classnames';
 
 import QuoteSize from './QuoteSize';
 import { formatNumber } from 'helpers/number.helpers';
+import TotalQuote from './TotalQuote';
 
 type QuoteRowProps = {
-  quote: IQuote;
-  type: 'SELL' | 'BUY';
+  quote: IQuoteWithTotal;
+  type: QuoteType;
 };
 
 const QuoteRow = ({ quote, type }: QuoteRowProps) => {
@@ -20,9 +21,7 @@ const QuoteRow = ({ quote, type }: QuoteRowProps) => {
         {formatNumber(quote.price)}
       </td>
       <QuoteSize quoteSize={quote.size} />
-      <td className='text-default-white flex justify-end'>
-        {formatNumber(quote.total || 0)}
-      </td>
+      <TotalQuote quoteTotal={quote.total} type={type} />
     </tr>
   );
 };

@@ -1,7 +1,7 @@
 export const sortQuotesPrice = (
   quotes: IQuote[],
   direction: 'ASC' | 'DESC'
-) => {
+): IQuote[] => {
   return quotes.sort((a, b) => {
     if (direction === 'ASC') {
       return a.price - b.price;
@@ -10,9 +10,9 @@ export const sortQuotesPrice = (
   });
 };
 
-export const modifyQuotes = (quotes: string[][]) => {
+export const modifyQuotes = (quotes: string[][]): IQuote[] => {
   return quotes
-    .map((quote, i) => {
+    .map((quote) => {
       const [price, size] = quote;
       return {
         price: Number(price),
@@ -22,9 +22,8 @@ export const modifyQuotes = (quotes: string[][]) => {
     .filter((quote) => quote.size > 0);
 };
 
-export const calculateQuotesTotal = (quotes: IQuote[]) => {
-  // TODO: CLEAN UP
-  const quotesWithTotal: { price: number; size: number; total: number }[] = [];
+export const calculateQuotesTotal = (quotes: IQuote[]): IQuoteWithTotal[] => {
+  const quotesWithTotal: IQuoteWithTotal[] = [];
   for (let i = 0; i < quotes.length; i += 1) {
     const currQuote = quotes[i];
     const nextQuote = quotesWithTotal[i - 1];
@@ -34,7 +33,7 @@ export const calculateQuotesTotal = (quotes: IQuote[]) => {
         ...currQuote,
         total: currQuote.size,
       });
-    } else if (i !== quotesWithTotal.length - 1) {
+    } else {
       quotesWithTotal.push({
         ...currQuote,
         total: currQuote.size + nextQuote.total,
