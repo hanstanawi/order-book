@@ -16,6 +16,30 @@ module.exports = {
         'navy-blue': '#1E3059',
         'dark-grey': 'rgba(134, 152, 170, 0.12)',
       },
+      keyframes: {
+        'flash-red': {
+          '0%': {
+            'background-color': 'rgba(255, 91, 90, 0.5)',
+            opacity: 1,
+          },
+          '100%': {
+            'background-color': 'inherit',
+          },
+        },
+        'flash-green': {
+          '0%': {
+            'background-color': 'rgba(0, 177, 93, 0.5)',
+            opacity: 1,
+          },
+          '100%': {
+            'background-color': 'inherit',
+          },
+        },
+      },
+      animation: {
+        'sell-flash': 'flash-red 100ms ease-out',
+        'buy-flash': 'flash-green 100ms ease-out',
+      },
     },
   },
   plugins: [],

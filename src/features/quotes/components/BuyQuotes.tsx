@@ -4,11 +4,7 @@ import QuotesList from './QuotesList';
 const BuyQuotes = () => {
   const buyQuotes = useAppSelector((state) => state.quotes.buyQuotes);
 
-  return (
-    <>
-      <QuotesList quotes={buyQuotes} type='BUY' />
-    </>
-  );
+  return <QuotesList quotes={buyQuotes} type='BUY' />;
 };
 
 export default BuyQuotes;

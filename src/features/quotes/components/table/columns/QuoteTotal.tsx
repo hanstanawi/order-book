@@ -1,12 +1,12 @@
 import { formatNumber } from 'helpers/number.helpers';
 import { useAppSelector } from 'hooks/use-app-selector';
 
-type TotalQuoteProps = {
+type QuoteTotalProps = {
   quoteTotal: number;
   type: QuoteType;
 };
 
-const TotalQuote = ({ quoteTotal, type }: TotalQuoteProps) => {
+const QuoteTotal = ({ quoteTotal, type }: QuoteTotalProps) => {
   const buyTotal = useAppSelector((state) => {
     const buyQuotesList = state.quotes.buyQuotes;
     return buyQuotesList[buyQuotesList.length - 1].total;
@@ -21,7 +21,7 @@ const TotalQuote = ({ quoteTotal, type }: TotalQuoteProps) => {
   const widthPercentage = (100 * quoteTotal) / totalQuote;
 
   return (
-    <td className='text-default-white flex justify-end'>
+    <td className='text-default-white w-full px-3 relative inline-block overflow-hidden'>
       <div
         style={{
           backgroundColor: `${
@@ -31,12 +31,11 @@ const TotalQuote = ({ quoteTotal, type }: TotalQuoteProps) => {
           }`,
           width: `${widthPercentage}%`,
         }}
-        className='flex justify-end'
-      >
-        {formatNumber(quoteTotal)}
-      </div>
+        className=' absolute top-0 right-0 h-full my-0.5'
+      />
+      <p className='text-end'>{formatNumber(quoteTotal)}</p>
     </td>
   );
 };
 
-export default TotalQuote;
+export default QuoteTotal;

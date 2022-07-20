@@ -1,8 +1,10 @@
 import cx from 'classnames';
+import { useEffect, useRef, useState } from 'react';
 
-import QuoteSize from './QuoteSize';
-import { formatNumber } from 'helpers/number.helpers';
-import TotalQuote from './TotalQuote';
+import QuoteSize from './columns/QuoteSize';
+import QuoteTotal from './columns/QuoteTotal';
+import QuotePrice from './columns/QuotePrice';
+import { useAppSelector } from 'hooks/use-app-selector';
 
 type QuoteRowProps = {
   quote: IQuoteWithTotal;
@@ -10,18 +12,37 @@ type QuoteRowProps = {
 };
 
 const QuoteRow = ({ quote, type }: QuoteRowProps) => {
+  const [flash, setFlash] = useState<boolean>(false);
+  const buyQuotes = useAppSelector((state) => state.quotes.buyQuotes);
+  const sellQuotes = useAppSelector((state) => state.quotes.sellQuotes);
+  const prevQuotes = useRef<IQuoteWithTotal[]>();
+
+  const currentQuotesList = type === 'BUY' ? buyQuotes : sellQuotes;
+
+  useEffect(() => {
+    const foundQuote = prevQuotes?.current?.find((q) => {
+      return q.price === quote.price;
+    });
+    if (!foundQuote) {
+      setFlash(true);
+    } else {
+      setFlash(false);
+    }
+    prevQuotes.current = currentQuotesList;
+  }, [quote, currentQuotesList]);
+
+  const bgClass = type === 'BUY' ? 'bg-flash-green' : 'bg-flash-red';
+
   return (
-    <tr className='px-3 w-full font-medium text-sm hover:bg-navy-blue py-0.5'>
-      <td
-        className={cx(
-          type === 'SELL' ? 'text-sell-red' : 'text-buy-green',
-          'justify-center'
-        )}
-      >
-        {formatNumber(quote.price)}
-      </td>
-      <QuoteSize quoteSize={quote.size} />
-      <TotalQuote quoteTotal={quote.total} type={type} />
+    <tr
+      className={cx(
+        'px-3 font-medium text-sm hover:bg-navy-blue py-0.5',
+        flash ? bgClass : ''
+      )}
+    >
+      <QuotePrice price={quote.price} type={type} />
+      <QuoteSize quote={quote} />
+      <QuoteTotal quoteTotal={quote.total} type={type} />
     </tr>
   );
 };

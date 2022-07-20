@@ -4,11 +4,7 @@ import QuotesList from './QuotesList';
 const SellQuotes = () => {
   const sellQuotes = useAppSelector((state) => state.quotes.sellQuotes);
 
-  return (
-    <>
-      <QuotesList quotes={sellQuotes} type='SELL' />
-    </>
-  );
+  return <QuotesList quotes={sellQuotes} type='SELL' />;
 };
 
 export default SellQuotes;

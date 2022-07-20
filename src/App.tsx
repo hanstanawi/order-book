@@ -1,5 +1,5 @@
 import useWebSocket from 'react-use-websocket';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import LastPrice from 'features/trade-history/components/LastPrice';
 import SellQuotes from 'features/quotes/components/SellQuotes';
@@ -11,16 +11,15 @@ import TableHeader from 'components/layout/TableHeader';
 import { QUOTES_WS_URL } from 'features/quotes/constants';
 import { useAppDispatch } from 'hooks/use-app-dispatch';
 import {
-  setBuyQuotesHandler,
-  setSellQuotesHandler,
+  addDeltaBuyQuotes,
+  addDeltaSellQuotes,
 } from 'features/quotes/slices/quotes.slice';
+import Table from 'components/layout/Table';
 
 /**
  * TODO:
- * - Fix table css (implement css grid)
- * - Add flash css animation
- * - Implement quote row flash animation when new quote appears (detect prev state)
- * - Implement quote size color change
+ * - Clean up code
+ * - Write documentation
  */
 
 function App() {
@@ -34,11 +33,11 @@ function App() {
 
   const processQuotes = (event: { data: string }): void => {
     const response = JSON.parse(event.data) as IOrderBookResponse;
-    dispatch(setBuyQuotesHandler(response.data.bids));
-    dispatch(setSellQuotesHandler(response.data.asks));
+    dispatch(addDeltaBuyQuotes(response.data.bids));
+    dispatch(addDeltaSellQuotes(response.data.asks));
   };
 
-  const subscribeHandler = useCallback(() => {
+  useEffect(() => {
     sendJsonMessage({
       op: 'subscribe',
       // @ts-ignore
@@ -55,18 +54,19 @@ function App() {
   }, [sendJsonMessage]);
 
   return (
-    <div className='h-screen flex flex-col justify-center items-center'>
-      <button onClick={subscribeHandler}>Subscribe</button>
+    <div className='h-screen flex flex-col justify-center items-center bg-gray-800'>
       <button onClick={unsubscribeHandler}>Unsubscribe</button>
       <Container>
         <AppTitle />
         <hr className='bg-gray opacity-20 my-2' />
-        <TableHeader />
-        <div className='flex flex-col justify-center gap-y-4'>
-          <SellQuotes />
-          <LastPrice />
-          <BuyQuotes />
-        </div>
+        <Table>
+          <TableHeader />
+          <tbody>
+            <SellQuotes />
+            <LastPrice />
+            <BuyQuotes />
+          </tbody>
+        </Table>
       </Container>
     </div>
   );

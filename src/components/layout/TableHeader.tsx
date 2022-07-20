@@ -1,10 +1,18 @@
 const TableHeader = () => {
   return (
-    <div className='w-full flex justify-between text-broken-white font-base text-sm py-2 px-3'>
-      <p>Price (USD)</p>
-      <p>Size</p>
-      <p>Total</p>
-    </div>
+    <thead className='w-full text-broken-white text-sm px-3'>
+      <tr>
+        <th scope='col' className='text-end font-normal pl-2'>
+          Price (USD)
+        </th>
+        <th scope='col' className='text-end font-normal'>
+          Size
+        </th>
+        <th scope='col' className='text-end font-normal pr-2'>
+          Total
+        </th>
+      </tr>
+    </thead>
   );
 };
 

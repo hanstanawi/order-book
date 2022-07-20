@@ -3,7 +3,7 @@ import cx from 'classnames';
 import useWebSocket from 'react-use-websocket';
 
 import ArrowIcon from 'components/icons/ArrowIcon';
-import { formatNumber } from 'helpers/number.helpers';
+import { formatPrice } from 'helpers/number.helpers';
 import { LAST_PRICE_WS_URL } from '../constants';
 import { useAppDispatch } from 'hooks/use-app-dispatch';
 import { useAppSelector } from 'hooks/use-app-selector';
@@ -38,25 +38,30 @@ const LastPrice = () => {
   }, [sendJsonMessage]);
 
   return (
-    <div
+    <tr
       className={cx(
-        'font-semibold py-1 w-full flex justify-center items-center gap-x-1',
+        'font-semibold w-full my-2',
         priceState === 'HIGHER' ? 'text-buy-green bg-dark-green' : '',
         priceState === 'LOWER' ? 'text-sell-red bg-dark-red' : '',
         priceState === 'EQUAL' ? 'text-default-white bg-dark-grey' : ''
       )}
     >
-      <p>{formatNumber(lastPrice)}</p>
-      <div
-        className={cx(
-          priceState === 'HIGHER' ? 'rotate-180 block' : '',
-          priceState === 'LOWER' ? 'block' : '',
-          priceState === 'EQUAL' ? 'hidden' : ''
-        )}
-      >
-        <ArrowIcon />
-      </div>
-    </div>
+      <td colSpan={3}>
+        <div className='flex justify-center items-center py-1 gap-x-1'>
+          <p>{formatPrice(lastPrice)}</p>
+          <div
+            className={cx(
+              priceState === 'HIGHER' ? 'rotate-180 block' : '',
+              priceState === 'LOWER' ? 'block' : '',
+              priceState === 'EQUAL' ? 'hidden' : '',
+              'flex'
+            )}
+          >
+            <ArrowIcon />
+          </div>
+        </div>
+      </td>
+    </tr>
   );
 };
 
