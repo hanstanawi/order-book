@@ -8,7 +8,10 @@ A simple app built using React.js, TypeScript, and TailwindCSS to track order bo
 * [TypeScript](https://www.typescriptlang.org/)
 * [React.js](https://reactjs.org/)
 * [Tailwind CSS](https://tailwindcss.com/)
+* [Redux Toolkit](https://redux-toolkit.js.org/)
 
+## State Management
+For state management, I use Redux Toolkit that provides out of the box Redux setup to manage global state of the app. Each features' state and reducers are managed by slices which is one of the main features of Redux Toolkit.
 
 ## Usage
 
@@ -56,3 +59,6 @@ Using features-based directory structure. Features-based directories separate sp
     ├── index.ts
     └── index.css
 ```
+
+## App Interface
+![Order Book Interface](/public/order-book-1.png)
