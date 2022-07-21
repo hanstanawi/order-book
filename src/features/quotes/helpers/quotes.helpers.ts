@@ -1,5 +1,54 @@
-import { ORDERBOOK_MAX_LEVEL } from '../constants';
+/**
+ * @description Check if quote with the same price exists in the current quotes
+ * @param {number} deltaPrice Price of delta quote
+ * @param {IQuote} currentQuotes Current quotes array
+ * @returns {boolean}
+ */
+const levelExists = (deltaPrice: number, currentQuotes: IQuote[]): boolean => {
+  return currentQuotes.some((quote) => quote.price === deltaPrice);
+};
 
+/**
+ * @description Update a quote with existing price that has updated size
+ * @param {IQuote} deltaQuote New delta Quote
+ * @param currentQuotes Current quotes array
+ * @returns {IQuote[]} Array with updated values
+ */
+const updateQuote = (deltaQuote: IQuote, currentQuotes: IQuote[]): IQuote[] => {
+  return currentQuotes.map((quote) => {
+    if (quote.price === deltaQuote.price) {
+      return { price: deltaQuote.price, size: deltaQuote.size };
+    }
+    return quote;
+  });
+};
+
+/**
+ * @description Remove a quote from the list
+ * @param {IQuote} deltaQuote Delta quote
+ * @param {IQuote[]} currentQuotes Current quotes array
+ * @returns {IQuote[]} Array with updated values
+ */
+const removeQuote = (deltaQuote: IQuote, currentQuotes: IQuote[]): IQuote[] => {
+  return currentQuotes.filter((quote) => quote.price !== deltaQuote.price);
+};
+
+/**
+ * @description Add a quote to quotes list
+ * @param {IQuote} deltaQuote New delta quote
+ * @param {IQuote[]} currentQuotes Current quotes array
+ * @returns {IQuote[]} Array with updated values
+ */
+const addQuote = (deltaQuote: IQuote, currentQuotes: IQuote[]): IQuote[] => {
+  return [deltaQuote, ...currentQuotes];
+};
+
+/**
+ * @description Sort quotes based on the price
+ * @param {IQuote[]} quotes Quotes array that needs to be sorted
+ * @param {'ASC' | 'DESC'} direction Ascending or Descending
+ * @returns {IQuote[]} Sorted quotes array
+ */
 export const sortQuotesPrice = (
   quotes: IQuote[],
   direction: 'ASC' | 'DESC'
@@ -13,7 +62,7 @@ export const sortQuotesPrice = (
 };
 
 /**
- * @desc Modify quotes data from multi-dimensional array of price and size to be array of objects
+ * @description Modify quotes data from multi-dimensional array of price and size to be array of objects
  * @param {string[][]} quotes
  * @returns {IQuote[]} Array of quote objects
  */
@@ -27,40 +76,36 @@ export const modifyQuotes = (quotes: string[][]): IQuote[] => {
   });
 };
 
-const levelExists = (deltaPrice: number, currentQuotes: IQuote[]) => {
-  return currentQuotes.some((quote) => quote.price === deltaPrice);
-};
-
 /**
  * @description 1. Iterates over delta quotes
- *              2. if size of a price is 0, remove the price from the list
- *              3. if quote with same price exists, update it with the new size
- *              4. if quote with same price doesn't exist, push it to the list
+ *              2. If size of a price is 0, remove the price from the list, then add the next quote
+ *              3. If quote with same price exists, update it with the new size
+ *              4. If quote with same price doesn't exist, push it to the list
  * @param {IQuote[]} deltaQuotes array of incoming modified delta data
  * @param {IQuote[]} currentQuotes array of current state
  * @returns {IQuote[]} array with updated delta data
  */
-export const applyDeltas = (deltaQuotes: IQuote[], currentQuotes: IQuote[]) => {
-  let updatedQuotes = currentQuotes;
-  deltaQuotes.forEach((deltaQuote) => {
-    const { price: deltaPriceNum, size: deltaSizeNum } = deltaQuote;
-
-    if (deltaSizeNum === 0 && updatedQuotes.length > ORDERBOOK_MAX_LEVEL) {
-      updatedQuotes = updatedQuotes.filter(
-        (quote) => quote.price !== deltaPriceNum
-      );
+export const applyDeltas = (
+  deltaQuotes: IQuote[],
+  currentQuotes: IQuote[]
+): IQuote[] => {
+  let updatedQuotes = [...currentQuotes];
+  // Iterates over delta quotes
+  deltaQuotes.forEach((quote, index, arr) => {
+    const { price: deltaPrice, size: deltaSize } = quote;
+    // If size of a price is 0, remove the price from the list, then add the next quote
+    if (deltaSize === 0) {
+      updatedQuotes = removeQuote(quote, updatedQuotes);
+      if (arr[index + 1]) {
+        updatedQuotes = addQuote(arr[index + 1], updatedQuotes);
+      }
     } else {
-      if (levelExists(deltaPriceNum, currentQuotes)) {
-        updatedQuotes = updatedQuotes.map((quote) => {
-          return quote.price === deltaPriceNum
-            ? { price: deltaPriceNum, size: deltaSizeNum }
-            : quote;
-        });
+      // If quote with same price exists, update it with the new size
+      if (levelExists(deltaPrice, currentQuotes)) {
+        updatedQuotes = updateQuote(quote, updatedQuotes);
+        // If quote with same price doesn't exist, push it to the list
       } else {
-        if (updatedQuotes.length < ORDERBOOK_MAX_LEVEL) {
-          const quoteObject = { price: deltaPriceNum, size: deltaSizeNum };
-          updatedQuotes = [quoteObject, ...updatedQuotes];
-        }
+        updatedQuotes = addQuote(quote, updatedQuotes);
       }
     }
   });
@@ -68,6 +113,11 @@ export const applyDeltas = (deltaQuotes: IQuote[], currentQuotes: IQuote[]) => {
   return updatedQuotes;
 };
 
+/**
+ * @description Calculate each quote item size and store them as total property
+ * @param {IQuote[]} quotes Quotes array with only price and size
+ * @returns {IQuoteWithTotal[]} Quotes array with updated total value on each object item
+ */
 export const calculateQuotesTotal = (quotes: IQuote[]): IQuoteWithTotal[] => {
   const quotesWithTotal: IQuoteWithTotal[] = [];
   for (let i = 0; i < quotes.length; i += 1) {

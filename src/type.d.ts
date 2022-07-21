@@ -35,3 +35,5 @@ interface ITradeHistoryResponse {
 }
 
 type QuoteType = 'SELL' | 'BUY';
+
+type PriceState = 'HIGHER' | 'LOWER' | 'EQUAL';

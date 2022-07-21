@@ -1,5 +1,5 @@
 import useWebSocket from 'react-use-websocket';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import LastPrice from 'features/trade-history/components/LastPrice';
 import SellQuotes from 'features/quotes/components/SellQuotes';
@@ -7,6 +7,7 @@ import BuyQuotes from 'features/quotes/components/BuyQuotes';
 import Container from 'components/layout/Container';
 import AppTitle from 'components/layout/AppTitle';
 import TableHeader from 'components/layout/TableHeader';
+import Table from 'components/layout/Table';
 
 import { QUOTES_WS_URL } from 'features/quotes/constants';
 import { useAppDispatch } from 'hooks/use-app-dispatch';
@@ -14,11 +15,9 @@ import {
   addDeltaBuyQuotes,
   addDeltaSellQuotes,
 } from 'features/quotes/slices/quotes.slice';
-import Table from 'components/layout/Table';
 
 /**
  * TODO:
- * - Clean up code
  * - Write documentation
  */
 
@@ -45,17 +44,8 @@ function App() {
     });
   }, [sendJsonMessage]);
 
-  const unsubscribeHandler = useCallback(() => {
-    sendJsonMessage({
-      op: 'unsubscribe',
-      // @ts-ignore
-      args: ['update:BTCPFC'],
-    });
-  }, [sendJsonMessage]);
-
   return (
     <div className='h-screen flex flex-col justify-center items-center bg-gray-800'>
-      <button onClick={unsubscribeHandler}>Unsubscribe</button>
       <Container>
         <AppTitle />
         <hr className='bg-gray opacity-20 my-2' />

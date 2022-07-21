@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
 import cx from 'classnames';
 import useWebSocket from 'react-use-websocket';
+import { useEffect } from 'react';
 
 import ArrowIcon from 'components/icons/ArrowIcon';
+
 import { formatPrice } from 'helpers/number.helpers';
 import { LAST_PRICE_WS_URL } from '../constants';
 import { useAppDispatch } from 'hooks/use-app-dispatch';

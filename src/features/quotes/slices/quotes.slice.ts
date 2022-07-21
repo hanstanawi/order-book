@@ -1,10 +1,12 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import {
+  applyDeltas,
   calculateQuotesTotal,
   modifyQuotes,
   sortQuotesPrice,
 } from '../helpers/quotes.helpers';
+import { ORDERBOOK_MAX_LEVEL } from '../constants';
 
 interface IQuoteState {
   buyQuotes: IQuoteWithTotal[];
@@ -16,71 +18,27 @@ const initialState: IQuoteState = {
   sellQuotes: [],
 };
 
-const levelExists = (deltaPrice: number, currentQuotes: IQuote[]) => {
-  return currentQuotes.some((quote) => quote.price === deltaPrice);
-};
-
 export const quotesSlice = createSlice({
   name: 'quotes',
   initialState,
   reducers: {
-    addDeltaBuyQuotes: (state, action: PayloadAction<string[][]>) => {
-      let updatedQuotes: IQuote[] = [...current(state).buyQuotes];
-      const modifiedDeltaQuotes = modifyQuotes(action.payload);
-      modifiedDeltaQuotes.forEach((quote, index, arr) => {
-        const { price: deltaPrice, size: deltaSize } = quote;
-        if (deltaSize === 0) {
-          updatedQuotes = updatedQuotes.filter(
-            (quote) => quote.price !== deltaPrice
-          );
-          if (arr[index + 1]) {
-            updatedQuotes = [arr[index + 1], ...updatedQuotes];
-          }
-        } else {
-          if (levelExists(deltaPrice, current(state).buyQuotes)) {
-            updatedQuotes = updatedQuotes.map((quote) => {
-              if (quote.price === deltaPrice) {
-                return { price: deltaPrice, size: deltaSize };
-              }
-              return quote;
-            });
-          } else {
-            updatedQuotes = [quote, ...updatedQuotes];
-          }
-        }
-      });
-
-      // const updatedQuotes = [...modifiedQuotes, ...current(state).buyQuotes];
-      const shownQuotes = updatedQuotes.slice(0, 8);
+    addDeltaBuyQuotes: (state, { payload }: PayloadAction<string[][]>) => {
+      const modifiedDeltaQuotes = modifyQuotes(payload);
+      const updatedQuotes = applyDeltas(
+        modifiedDeltaQuotes,
+        current(state).buyQuotes
+      );
+      const shownQuotes = updatedQuotes.slice(0, ORDERBOOK_MAX_LEVEL);
       const sortedQuotes = sortQuotesPrice(shownQuotes, 'DESC');
       state.buyQuotes = calculateQuotesTotal(sortedQuotes);
     },
-    addDeltaSellQuotes: (state, action: PayloadAction<string[][]>) => {
-      let updatedQuotes: IQuote[] = [...current(state).sellQuotes];
-      const modifiedDeltaQuotes = modifyQuotes(action.payload);
-      modifiedDeltaQuotes.forEach((quote, index, arr) => {
-        const { price: deltaPrice, size: deltaSize } = quote;
-        if (deltaSize === 0) {
-          updatedQuotes = updatedQuotes.filter(
-            (quote) => quote.price !== deltaPrice
-          );
-          if (arr[index + 1]) {
-            updatedQuotes = [arr[index + 1], ...updatedQuotes];
-          }
-        } else {
-          if (levelExists(deltaPrice, current(state).sellQuotes)) {
-            updatedQuotes = updatedQuotes.map((quote) => {
-              if (quote.price === deltaPrice) {
-                return { price: deltaPrice, size: deltaSize };
-              }
-              return quote;
-            });
-          } else {
-            updatedQuotes = [quote, ...updatedQuotes];
-          }
-        }
-      });
-      const shownQuotes = updatedQuotes.slice(0, 8);
+    addDeltaSellQuotes: (state, { payload }: PayloadAction<string[][]>) => {
+      const modifiedDeltaQuotes = modifyQuotes(payload);
+      const updatedQuotes = applyDeltas(
+        modifiedDeltaQuotes,
+        current(state).sellQuotes
+      );
+      const shownQuotes = updatedQuotes.slice(0, ORDERBOOK_MAX_LEVEL);
       const sortedQuotes = sortQuotesPrice(shownQuotes, 'ASC');
       const quotesWithTotal = calculateQuotesTotal(sortedQuotes);
       // Sort the sell quotes back in descending order after calculating the quote total

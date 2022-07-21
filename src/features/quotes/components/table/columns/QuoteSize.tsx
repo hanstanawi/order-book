@@ -15,9 +15,9 @@ const QuoteSize = ({ quote }: QuoteSizeProps) => {
     // Compare quote size change for a single price
     if (prevQuote?.current?.price === quote.price) {
       if (quote.size > prevQuote.current.size) {
-        setSizeState('LOWER');
-      } else if (quote.size < prevQuote.current.size) {
         setSizeState('HIGHER');
+      } else if (quote.size < prevQuote.current.size) {
+        setSizeState('LOWER');
       } else {
         setSizeState(null);
       }

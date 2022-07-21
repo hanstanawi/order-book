@@ -1,7 +1,6 @@
 import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-type PriceState = 'HIGHER' | 'LOWER' | 'EQUAL';
 interface ITradeHistoryState {
   lastPrice: number;
   lastPriceState: PriceState;
@@ -12,6 +11,12 @@ const initialState: ITradeHistoryState = {
   lastPriceState: 'EQUAL',
 };
 
+/**
+ * @description Determine price state based on comparison between previous price and current price
+ * @param {number} prevPrice Previous price number
+ * @param {number} newPrice Current price number
+ * @returns {PriceState} Higher, Lower, or Equal
+ */
 const setPriceState = (prevPrice: number, newPrice: number): PriceState => {
   if (newPrice > prevPrice) {
     return 'HIGHER';
