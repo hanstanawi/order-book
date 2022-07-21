@@ -2,6 +2,7 @@ import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import {
   applyDeltas,
+  applySnapshots,
   calculateQuotesTotal,
   modifyQuotes,
   sortQuotesPrice,
@@ -22,6 +23,17 @@ export const quotesSlice = createSlice({
   name: 'quotes',
   initialState,
   reducers: {
+    setQuotesSnapshot: (
+      state,
+      { payload }: PayloadAction<IOrderBookResponse>
+    ) => {
+      const buyQuotes = payload.data.bids;
+      const sellQuotes = payload.data.asks;
+      state.buyQuotes = applySnapshots(buyQuotes, 'BUY');
+      state.sellQuotes = applySnapshots(sellQuotes, 'SELL').sort((a, b) => {
+        return b.price - a.price;
+      });
+    },
     addDeltaBuyQuotes: (state, { payload }: PayloadAction<string[][]>) => {
       const modifiedDeltaQuotes = modifyQuotes(payload);
       const updatedQuotes = applyDeltas(
@@ -49,6 +61,7 @@ export const quotesSlice = createSlice({
   },
 });
 
-export const { addDeltaBuyQuotes, addDeltaSellQuotes } = quotesSlice.actions;
+export const { addDeltaBuyQuotes, addDeltaSellQuotes, setQuotesSnapshot } =
+  quotesSlice.actions;
 
 export default quotesSlice.reducer;

@@ -1,3 +1,5 @@
+import { ORDERBOOK_MAX_LEVEL } from '../constants';
+
 /**
  * @description Check if quote with the same price exists in the current quotes
  * @param {number} deltaPrice Price of delta quote
@@ -111,6 +113,25 @@ export const applyDeltas = (
   });
 
   return updatedQuotes;
+};
+
+/**
+ * @description Set initial snapshot of quotes data from websocket
+ * @param {string[][]} snapshotQuotes Array of snapshot quotes
+ * @param {QuoteType} quoteType Buy or Sell quotes
+ * @returns {IQuoteWithTotal[]} Array with quotes object with total
+ */
+export const applySnapshots = (
+  snapshotQuotes: string[][],
+  quoteType: QuoteType
+): IQuoteWithTotal[] => {
+  const modifiedBuyQuotes = modifyQuotes(snapshotQuotes);
+  const shownQuotes = modifiedBuyQuotes.slice(0, ORDERBOOK_MAX_LEVEL);
+  const sortedQuotes = sortQuotesPrice(
+    shownQuotes,
+    quoteType === 'BUY' ? 'DESC' : 'ASC'
+  );
+  return calculateQuotesTotal(sortedQuotes);
 };
 
 /**

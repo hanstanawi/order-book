@@ -14,6 +14,7 @@ import { useAppDispatch } from 'hooks/use-app-dispatch';
 import {
   addDeltaBuyQuotes,
   addDeltaSellQuotes,
+  setQuotesSnapshot,
 } from 'features/quotes/slices/quotes.slice';
 
 /**
@@ -32,8 +33,12 @@ function App() {
 
   const processQuotes = (event: { data: string }): void => {
     const response = JSON.parse(event.data) as IOrderBookResponse;
-    dispatch(addDeltaBuyQuotes(response.data.bids));
-    dispatch(addDeltaSellQuotes(response.data.asks));
+    if (response.data.type === 'snapshot') {
+      dispatch(setQuotesSnapshot(response));
+    } else {
+      dispatch(addDeltaBuyQuotes(response.data.bids));
+      dispatch(addDeltaSellQuotes(response.data.asks));
+    }
   };
 
   useEffect(() => {
