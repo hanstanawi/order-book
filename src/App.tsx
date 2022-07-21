@@ -17,11 +17,6 @@ import {
   setQuotesSnapshot,
 } from 'features/quotes/slices/quotes.slice';
 
-/**
- * TODO:
- * - Write documentation
- */
-
 function App() {
   const dispatch = useAppDispatch();
 
